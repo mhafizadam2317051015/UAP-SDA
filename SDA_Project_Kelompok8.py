@@ -137,3 +137,58 @@ def delete_book_gui(library):
         messagebox.showerror("Error", "Book ID cannot be empty!")
         return
     messagebox.showinfo("Result", library.delete_book(id))
+
+def search_books_gui(library):
+    keyword = simpledialog.askstring("Input", "Enter keyword to search:")
+    if not keyword:
+        messagebox.showerror("Error", "Keyword cannot be empty!")
+        return
+    results = library.search_books(keyword)
+    messagebox.showinfo("Search Results", results)
+
+def import_books_gui(library):
+    filename = filedialog.askopenfilename(title="Select CSV File", filetypes=[("CSV files", "*.csv")])
+    if filename:
+        messagebox.showinfo("Result", library.import_books_from_csv(filename))
+
+def sort_books_title_gui(library):
+    messagebox.showinfo("Result", library.sort_books_by_title())
+
+def sort_books_year_gui(library):
+    messagebox.showinfo("Result", library.sort_books_by_year())
+
+def main():
+    library = Library()
+    
+    root = tk.Tk()
+    root.title("Library Management System")
+    
+    root.configure(bg='lightcyan')
+
+    title_label = tk.Label(root, text="Library Management System", bg='lightcyan', fg='blue', font=('Algerian', 24, 'bold'))
+    title_label.pack(pady=10)
+
+    button_frame = tk.Frame(root, bg='#D2B48C')
+    button_frame.pack(pady=10)
+
+    text_widget = tk.Text(root, height=15, width=100, wrap='word', bg='white', fg='black', font=('Times New Roman', 12), borderwidth=5, relief='groove')
+    text_widget.pack(pady=10)
+    text_widget.config(state=tk.DISABLED)
+
+    def create_button(frame, text, command, bg_color):
+        return tk.Button(frame, text=text, command=command, bg=bg_color, fg='black', font=('Times New Roman', 10, 'bold'), padx=10, pady=5, borderwidth=3, relief='raised')
+
+    create_button(button_frame, "Add Book", lambda: add_book_gui(library), 'lightblue').pack(side='left', padx=5, pady=5)
+    create_button(button_frame, "View Books", lambda: view_books_gui(library, text_widget), 'lightgreen').pack(side='left', padx=5, pady=5)
+    create_button(button_frame, "Update Book", lambda: update_book_gui(library), 'lightyellow').pack(side='left', padx=5, pady=5)
+    create_button(button_frame, "Delete Book", lambda: delete_book_gui(library), 'lightcoral').pack(side='left', padx=5, pady=5)
+    create_button(button_frame, "Search Books", lambda: search_books_gui(library), 'lightpink').pack(side='left', padx=5, pady=5)
+    create_button(button_frame, "Import Books from CSV", lambda: import_books_gui(library), 'lightgray').pack(side='left', padx=5, pady=5)
+    create_button(button_frame, "Sort Books by Title", lambda: sort_books_title_gui(library), 'lavender').pack(side='left', padx=5, pady=5)
+    create_button(button_frame, "Sort Books by Year", lambda: sort_books_year_gui(library), 'lightgoldenrodyellow').pack(side='left', padx=5, pady=5)
+    create_button(button_frame, "Exit", root.quit, 'lightsteelblue').pack(side='left', padx=5, pady=5)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
