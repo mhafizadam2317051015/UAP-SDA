@@ -1,1 +1,69 @@
+import csv
+import tkinter as tk
+from tkinter import messagebox, simpledialog, filedialog
 
+class Book:
+    def __init__(self, id, title, author, year):
+        self.id = id
+        self.title = title
+        self.author = author
+        self.year = year
+
+    def __str__(self):
+        return f"ID: {self.id}, Title: {self.title}, Author: {self.author}, Year: {self.year}"
+
+class Library:
+    def __init__(self, filename="library.csv"):
+        self.books = []
+        self.filename = filename
+        self.load_books_from_csv()
+
+    def add_book(self, id, title, author, year):
+        if any(book.id == id for book in self.books):
+            return f"Book ID {id} already exists!"
+        book = Book(id, title, author, year)
+        self.books.append(book)
+        self.save_books_to_csv()
+        return f"Book '{title}' added successfully!"
+
+    def view_books(self):
+        if not self.books:
+            return "No books in the library."
+        return "\n".join(str(book) for book in self.books)
+
+    def update_book(self, id, title=None, author=None, year=None):
+        for book in self.books:
+            if book.id == id:
+                if title:
+                    book.title = title
+                if author:
+                    book.author = author
+                if year:
+                    book.year = year
+                self.save_books_to_csv()
+                return f"Book ID {id} updated successfully!"
+        return f"No book found with ID {id}"
+
+    def delete_book(self, id):
+        for book in self.books:
+            if book.id == id:
+                self.books.remove(book)
+                self.save_books_to_csv()
+                return f"Book ID {id} deleted successfully!"
+        return f"No book found with ID {id}"
+
+    def search_books(self, keyword):
+        results = [book for book in self.books if keyword.lower() in book.title.lower() or keyword.lower() in book.author.lower()]
+        if not results:
+            return "No books found matching the keyword."
+        return "\n".join(str(book) for book in results)
+
+    def sort_books_by_title(self):
+        self.books.sort(key=lambda book: book.title)
+        self.save_books_to_csv()
+        return "Books sorted by title!"
+
+    def sort_books_by_year(self):
+        self.books.sort(key=lambda book: book.year)
+        self.save_books_to_csv()
+        return "Books sorted by year!"
