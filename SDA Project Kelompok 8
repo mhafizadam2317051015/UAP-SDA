@@ -67,3 +67,73 @@ class Library:
         self.books.sort(key=lambda book: book.year)
         self.save_books_to_csv()
         return "Books sorted by year!"
+
+    def import_books_from_csv(self, filename):
+        try:
+            with open(filename, mode='r') as file:
+                csv_reader = csv.DictReader(file)
+                for row in csv_reader:
+                    self.add_book(row['id'], row['title'], row['author'], row['year'])
+            return "Books imported successfully from CSV file!"
+        except FileNotFoundError:
+            return f"File {filename} not found."
+        except Exception as e:
+            return str(e)
+
+
+    def save_books_to_csv(self):
+        with open(self.filename, mode='w', newline='') as file:
+            fieldnames = ['id', 'title', 'author', 'year']
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            for book in self.books:
+                writer.writerow({'id': book.id, 'title': book.title, 'author': book.author, 'year': book.year})
+
+    def load_books_from_csv(self):
+        try:
+            with open(self.filename, mode='r') as file:
+                csv_reader = csv.DictReader(file)
+                for row in csv_reader:
+                    self.add_book(row['id'], row['title'], row['author'], row['year'])
+        except FileNotFoundError:
+            pass
+
+def add_book_gui(library):
+    id = simpledialog.askstring("Input", "Enter book ID:")
+    if not id:
+        messagebox.showerror("Error", "Book ID cannot be empty!")
+        return
+    title = simpledialog.askstring("Input", "Enter book title:")
+    author = simpledialog.askstring("Input", "Enter book author:")
+    year = simpledialog.askstring("Input", "Enter publication year:")
+    if year and not year.isdigit():
+        messagebox.showerror("Error", "Publication year must be a number!")
+        return
+    messagebox.showinfo("Result", library.add_book(id, title, author, year))
+
+def view_books_gui(library, text_widget):
+    books = library.view_books()
+    text_widget.config(state=tk.NORMAL)
+    text_widget.delete(1.0, tk.END)
+    text_widget.insert(tk.END, books)
+    text_widget.config(state=tk.DISABLED)
+
+def update_book_gui(library):
+    id = simpledialog.askstring("Input", "Enter book ID to update:")
+    if not id:
+        messagebox.showerror("Error", "Book ID cannot be empty!")
+        return
+    title = simpledialog.askstring("Input", "Enter new title (leave blank to keep unchanged):")
+    author = simpledialog.askstring("Input", "Enter new author (leave blank to keep unchanged):")
+    year = simpledialog.askstring("Input", "Enter new year (leave blank to keep unchanged):")
+    if year and not year.isdigit():
+        messagebox.showerror("Error", "Publication year must be a number!")
+        return
+    messagebox.showinfo("Result", library.update_book(id, title, author, year))
+
+def delete_book_gui(library):
+    id = simpledialog.askstring("Input", "Enter book ID to delete:")
+    if not id:
+        messagebox.showerror("Error", "Book ID cannot be empty!")
+        return
+    messagebox.showinfo("Result", library.delete_book(id))
