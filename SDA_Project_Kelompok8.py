@@ -10,7 +10,7 @@ class Book:
         self.year = year
 
     def __str__(self):
-        return f"ID: {self.id}, Title: {self.title}, Author: {self.author}, Year: {self.year}"
+        return f"ISBN: {self.id}, Title: {self.title}, Author: {self.author}, Year: {self.year}"
 
 class Library:
     def __init__(self, filename="library.csv"):
@@ -20,7 +20,7 @@ class Library:
 
     def add_book(self, id, title, author, year):
         if any(book.id == id for book in self.books):
-            return f"Book ID {id} already exists!"
+            return f"Book ISBN {id} already exists!"
         book = Book(id, title, author, year)
         self.books.append(book)
         self.save_books_to_csv()
@@ -41,16 +41,16 @@ class Library:
                 if year:
                     book.year = year
                 self.save_books_to_csv()
-                return f"Book ID {id} updated successfully!"
-        return f"No book found with ID {id}"
+                return f"Book ISBN {id} updated successfully!"
+        return f"No book found with ISBN {id}"
 
     def delete_book(self, id):
         for book in self.books:
             if book.id == id:
                 self.books.remove(book)
                 self.save_books_to_csv()
-                return f"Book ID {id} deleted successfully!"
-        return f"No book found with ID {id}"
+                return f"Book ISBN {id} deleted successfully!"
+        return f"No book found with ISBN {id}"
 
     def search_books(self, keyword):
         results = [book for book in self.books if keyword.lower() in book.title.lower() or keyword.lower() in book.author.lower()]
@@ -99,9 +99,9 @@ class Library:
             pass
 
 def add_book_gui(library):
-    id = simpledialog.askstring("Input", "Enter book ID:")
+    id = simpledialog.askstring("Input", "Enter book ISBN:")
     if not id:
-        messagebox.showerror("Error", "Book ID cannot be empty!")
+        messagebox.showerror("Error", "Book ISBN cannot be empty!")
         return
     title = simpledialog.askstring("Input", "Enter book title:")
     author = simpledialog.askstring("Input", "Enter book author:")
@@ -119,9 +119,9 @@ def view_books_gui(library, text_widget):
     text_widget.config(state=tk.DISABLED)
 
 def update_book_gui(library):
-    id = simpledialog.askstring("Input", "Enter book ID to update:")
+    id = simpledialog.askstring("Input", "Enter book ISBN to update:")
     if not id:
-        messagebox.showerror("Error", "Book ID cannot be empty!")
+        messagebox.showerror("Error", "Book ISBN cannot be empty!")
         return
     title = simpledialog.askstring("Input", "Enter new title (leave blank to keep unchanged):")
     author = simpledialog.askstring("Input", "Enter new author (leave blank to keep unchanged):")
@@ -132,9 +132,9 @@ def update_book_gui(library):
     messagebox.showinfo("Result", library.update_book(id, title, author, year))
 
 def delete_book_gui(library):
-    id = simpledialog.askstring("Input", "Enter book ID to delete:")
+    id = simpledialog.askstring("Input", "Enter book ISBN to delete:")
     if not id:
-        messagebox.showerror("Error", "Book ID cannot be empty!")
+        messagebox.showerror("Error", "Book ISBN cannot be empty!")
         return
     messagebox.showinfo("Result", library.delete_book(id))
 
@@ -176,7 +176,7 @@ def main():
     text_widget.config(state=tk.DISABLED)
 
     def create_button(frame, text, command, bg_color):
-        return tk.Button(frame, text=text, command=command, bg=bg_color, fg='black', font=('Times New Roman', 10, 'bold'), padx=10, pady=5, borderwidth=3, relief='raised')
+        return tk.Button(frame, text=text, command=command, bg=bg_color, fg='black', font=('Times New Roman', 12, 'bold'), padx=10, pady=5, borderwidth=3, relief='raised')
 
     create_button(button_frame, "Add Book", lambda: add_book_gui(library), 'lightblue').pack(side='left', padx=5, pady=5)
     create_button(button_frame, "View Books", lambda: view_books_gui(library, text_widget), 'lightgreen').pack(side='left', padx=5, pady=5)
